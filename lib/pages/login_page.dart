@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
               const Padding(
-                padding: EdgeInsets.only(top: 60.0),
+                padding: EdgeInsets.only(top: 50.0),
                 child: Center(
                   child: SizedBox(
                     width: 200,
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               const Padding(
                 padding: EdgeInsets.only(bottom: 12.0),
                 child: Text(
-                  "Sign In",
+                  "Login Your Account",
                   style: TextStyle(
                     fontSize: 35,
                     color: Colors.white,
@@ -49,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
 
               //? EMAIL FIELD
               const Padding(
-                //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: TextField(
                   style: TextStyle(color: Colors.white),
@@ -94,72 +93,54 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              // TextButton(
-              //   onPressed: () {
-              //     //? TODO FORGOT PASSWORD SCREEN GOES HERE
-              //   },
-              //   child: const Text(
-              //     'Forgot Password',
-              //     style: TextStyle(color: Colors.blue, fontSize: 15),
-              //   ),
-              // ),
-
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: Container(
-                      height: 50,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const HomePage()),
-                          );
-                        },
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white, fontSize: 25),
-                        ),
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0, left: 15, right: 15),
+                child: Container(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      );
+                    },
+                    child: const Text(
+                      'SIGN IN',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      height: 50,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const RegisterPage()),
-                          );
-                        },
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(color: Colors.white, fontSize: 25),
-                        ),
-                      ),
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "If you don't have an Account? ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterPage()),
+                      );
+                    },
+                    child: const Text(
+                      'SIGN UP',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ],
               ),
-
-              // const SizedBox(
-              //   height: 130,
-              // ),
-              // const Text('New User? Create Account')
             ],
           ),
         ),

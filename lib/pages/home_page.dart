@@ -15,6 +15,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('HOME PAGE'),
       ),
+      backgroundColor: Colors.black,
       body: Center(
         child: Container(
           height: 80,
