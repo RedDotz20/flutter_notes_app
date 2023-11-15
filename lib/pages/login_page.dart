@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
               const Padding(
-                padding: EdgeInsets.only(top: 50.0),
+                padding: EdgeInsets.only(top: 100.0),
                 child: Center(
                   child: SizedBox(
                     width: 200,
