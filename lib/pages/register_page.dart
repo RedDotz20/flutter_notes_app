@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+// import 'package:flutter/foundation.dart';
+
 import 'package:flutter_todo_app/pages/home_page.dart';
 import 'package:flutter_todo_app/pages/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -11,8 +15,33 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController newUsernameController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
   bool _obscureText = true;
   bool _confirmObscureText = true;
+
+  Future<void> register() async {
+    final response = await http.post(
+      Uri.parse('http://your-api-url/register.php'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'username': newUsernameController.text,
+        'password': newPasswordController.text,
+        'confirmPassword': confirmPasswordController.text
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint('User registered successfully');
+    } else {
+      debugPrint('Failed to register user');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
