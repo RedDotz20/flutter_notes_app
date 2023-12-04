@@ -6,18 +6,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$json = file_get_contents('php://input');
 	$data = json_decode($json, true);
 
-	if (isset($data['email']) && isset($data['password'])) {
-		$email = $data['email'];
+	if (isset($data['username']) && isset($data['password'])) {
+		$username = $data['username'];
 		$password = $data['password'];
 
-		$stmt = $connection->prepare('SELECT * FROM users WHERE email = ?');
-		$stmt->bind_param('s', $email);
+		$stmt = $connection->prepare('SELECT * FROM users WHERE username = ?');
+		$stmt->bind_param('s', $username);
 		$stmt->execute();
 		$result = $stmt->get_result();
 
 		if ($result->num_rows === 1) {
 			$row = $result->fetch_assoc();
-			$id = $row['id'];
+			$id = $row['user_id'];
       $currentPassword = $row['password'];
 
       if ($currentPassword === $password) {
