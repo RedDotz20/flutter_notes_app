@@ -7,7 +7,7 @@ import 'package:flutter_todo_app/pages/home_page.dart';
 import 'package:flutter_todo_app/pages/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

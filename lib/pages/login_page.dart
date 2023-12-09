@@ -7,7 +7,7 @@ import 'register_page.dart';
 // import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

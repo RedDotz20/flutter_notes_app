@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../services/crud_service.dart';
+import '../models/todo_model.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -9,45 +11,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<TodoItem> _todoList = <TodoItem>[];
+  final ApiService apiService = ApiService('http://your_php_server');
   final TextEditingController _textFieldController = TextEditingController();
+  List<TodoItem> _todoList = <TodoItem>[];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text(
-          'TODO-LIST',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.blue,
-      ),
-      body: ListView(children: _getItems()),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _displayDialog(context),
-        tooltip: 'Add Item',
-        backgroundColor: Colors.blue,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: const Icon(Icons.add),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _loadTodos();
   }
 
-  void _addTodoItem(String title) {
+  Future<void> _loadTodos() async {
+    final List<Todo> fetchedTodos = await apiService.getTodos();
     setState(() {
-      _todoList.add(TodoItem(title: title, isDone: false));
+      _todoList = fetchedTodos.map((todo) => TodoItem.fromTodo(todo)).toList();
     });
-    _textFieldController.clear();
   }
 
-  void _editTodoItem(int index) {
+  Future<void> _addTodoItem(String title) async {
+    await apiService.createTodo(title);
+    _textFieldController.clear();
+    _loadTodos();
+  }
+
+  Future<void> _editTodoItem(int index) async {
     TextEditingController editController =
         TextEditingController(text: _todoList[index].title);
 
@@ -66,9 +53,13 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             TextButton(
               child: const Text('UPDATE'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                _updateTodoItem(index, editController.text);
+                await apiService.updateTodo(
+                  _todoList[index].id,
+                  editController.text,
+                );
+                _loadTodos();
               },
             ),
             TextButton(
@@ -83,13 +74,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _updateTodoItem(int index, String newTitle) {
-    setState(() {
-      _todoList[index].title = newTitle;
-    });
-  }
-
-  void _deleteTodoItem(int index) {
+  Future<void> _deleteTodoItem(int index) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -102,9 +87,10 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             TextButton(
               child: const Text('DELETE'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                _confirmDelete(index);
+                await apiService.deleteTodo(_todoList[index].id);
+                _loadTodos();
               },
             ),
             TextButton(
@@ -117,12 +103,6 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-  }
-
-  void _confirmDelete(int index) {
-    setState(() {
-      _todoList.removeAt(index);
-    });
   }
 
   void _toggleDone(int index) {
@@ -165,7 +145,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future _displayDialog(BuildContext context) async {
+  Future<void> _displayDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -181,9 +161,9 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             TextButton(
               child: const Text('ADD'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                _addTodoItem(_textFieldController.text);
+                await _addTodoItem(_textFieldController.text);
               },
             ),
             TextButton(
@@ -198,17 +178,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Widget> _getItems() {
-    return List.generate(
-      _todoList.length,
-      (index) => _buildTodoItem(_todoList[index], index),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text(
+          'TODO-LIST',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.blue,
+      ),
+      body: ListView(
+          children: _todoList
+              .map((todo) => _buildTodoItem(todo, _todoList.indexOf(todo)))
+              .toList()),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _displayDialog(context),
+        tooltip: 'Add Item',
+        backgroundColor: Colors.blue,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: const Icon(Icons.add),
+      ),
     );
   }
-}
-
-class TodoItem {
-  String title;
-  bool isDone;
-
-  TodoItem({required this.title, required this.isDone});
 }
