@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import "../pages/register_page.dart";
+import "package:flutter_todo_app/pages/register_page.dart";
 
 class SignUpLink extends StatelessWidget {
   const SignUpLink({super.key});

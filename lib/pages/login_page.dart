@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import "dart:convert";
-import "../widgets/email_field.dart";
-import "../widgets/password_field.dart";
-import "../widgets/submit_button.dart";
-import "../widgets/sign_up_link.dart";
+
+import "../widgets/loginWidgets/email_field.dart";
+import "../widgets/loginWidgets/password_field.dart";
+import "../widgets/loginWidgets/submit_button.dart";
+import "../widgets/loginWidgets/sign_up_link.dart";
 import "../pages/home_page.dart";
 
 class LoginPage extends StatefulWidget {
@@ -140,7 +141,10 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           // ... other widgets
-          EmailField(controller: usernameController),
+          EmailField(
+            controller: usernameController,
+            labelText: "Email",
+          ),
           PasswordField(
             controller: passwordController,
             obscureText: obscureText,
