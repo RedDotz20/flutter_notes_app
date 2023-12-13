@@ -1,7 +1,7 @@
 class Todo {
   late int id;
   late String title;
-  late bool completed;
+  late bool completed; // Keep the data type as bool
 
   Todo({
     required this.id,
@@ -9,16 +9,18 @@ class Todo {
     required this.completed,
   });
 
-  factory Todo.fromJson(Map<String, dynamic> json) => Todo(
-        id: json['id'] as int,
-        title: json['title'] as String,
-        completed: json['completed'] as bool,
-      );
+  factory Todo.fromJson(Map<String, dynamic> json) {
+    return Todo(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      completed: json['completed'] == 1, // Convert to boolean
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'completed': completed,
+        'completed': completed ? 1 : 0, // Convert bool to tinyint(1)
       };
 }
 

@@ -7,7 +7,7 @@ class ApiService {
   ApiService(this.baseUrl);
 
   Future<List<Todo>> getTodos() async {
-    final response = await http.get(Uri.parse('$baseUrl/api.php'));
+    final response = await http.get(Uri.parse('$baseUrl/crud.php'));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body)['tasks'];
       return data.map((json) => Todo.fromJson(json)).toList();
@@ -18,7 +18,7 @@ class ApiService {
 
   Future<void> createTodo(String title) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api.php'),
+      Uri.parse('$baseUrl/crud.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'title': title}),
     );
@@ -29,7 +29,7 @@ class ApiService {
 
   Future<void> updateTodo(int id, String newTitle) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/api.php'),
+      Uri.parse('$baseUrl/crud.php'),
       headers: {'Content-Type': 'application/json'},
       body:
           jsonEncode({'id': id, 'title': newTitle}), //? Pass both id and title
@@ -42,7 +42,7 @@ class ApiService {
 
   Future<void> deleteTodo(int id) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/api.php'),
+      Uri.parse('$baseUrl/crud.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'id': id}),
     );

@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ApiService apiService = ApiService('http://your_php_server');
+  final ApiService apiService = ApiService('http://192.168.1.6:4000');
   final TextEditingController _textFieldController = TextEditingController();
   List<TodoItem> _todoList = <TodoItem>[];
 
@@ -25,6 +25,12 @@ class _HomePageState extends State<HomePage> {
     final List<Todo> fetchedTodos = await apiService.getTodos();
     setState(() {
       _todoList = fetchedTodos.map((todo) => TodoItem.fromTodo(todo)).toList();
+    });
+  }
+
+  void _toggleDone(int index) {
+    setState(() {
+      _todoList[index].isDone = !_todoList[index].isDone;
     });
   }
 
@@ -103,12 +109,6 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-  }
-
-  void _toggleDone(int index) {
-    setState(() {
-      _todoList[index].isDone = !_todoList[index].isDone;
-    });
   }
 
   Widget _buildTodoItem(TodoItem todoItem, int index) {
