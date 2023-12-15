@@ -30,14 +30,50 @@ class _HomePageState extends State<HomePage> {
   }
 
   // open dialog box to add note
-  void openNoteBox({String? docID}) {
+  void openNoteBox(
+      {String? docID, String action = "add", String? defaultNote}) {
+    textController.text = defaultNote ?? "";
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(8.0), // Adjust the radius as needed
+        ),
+        title: Text(
+            action == "add" ? "Add Note" : "Update Note"), // Add a title here
         content: TextField(
           controller: textController,
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: Colors.blue), // Set the underline color to blue
+            ),
+          ),
+          cursorColor: Colors.blue,
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              // Cancel button action
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              // backgroundColor: Colors.grey, // Set the button color to grey
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(5.0), // Minimal border radius
+              ),
+            ),
+            child: const Text(
+              "Cancel",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           ElevatedButton(
             onPressed: () {
               // add note to firestore
@@ -59,7 +95,21 @@ class _HomePageState extends State<HomePage> {
               //close the box
               Navigator.pop(context);
             },
-            child: const Text("Add"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue, // Set the button color to blue
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(5.0), // Minimal border radius
+              ),
+            ),
+            child: Text(
+              action == "add" ? "ADD" : "UPDATE",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -69,44 +119,66 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Notes")),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text("Notes List",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            const UserAccountsDrawerHeader(
-              accountName: Text("User Name"),
-              accountEmail: Text("user@example.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person),
-              ),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                // Handle item 1 press
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                // Handle item 2 press
-              },
-            ),
-            const Spacer(),
-            ListTile(
-              title: const Text('Logout'),
-              onTap: () {
-                // Handle logout press
-                signOutAccount();
-                // You can add your logout logic here
-              },
-            ),
-          ],
+        child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            User? user = snapshot.data;
+
+            if (user != null) {
+              return Column(
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                    accountName: const Text("Logged In As"),
+                    accountEmail: Text(user.email ?? "user@example.com"),
+                    currentAccountPicture: const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person),
+                    ),
+                    decoration: const BoxDecoration(
+                      color: Colors.blue, // Set your desired color here
+                    ),
+                  ),
+                  const Spacer(),
+                  ListTile(
+                    title: const Text('Logout'),
+                    onTap: () {
+                      // Handle logout press
+                      signOutAccount();
+                      // You can add your logout logic here
+                    },
+                  ),
+                ],
+              );
+            } else {
+              return const ListTile(
+                title: Text('Not signed in'),
+              );
+            }
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => openNoteBox(),
+        backgroundColor: Colors.blue,
+        tooltip: 'Add Note',
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -131,21 +203,34 @@ class _HomePageState extends State<HomePage> {
 
                 // display as a list title
                 return ListTile(
-                  title: Text(noteText),
+                  title: Text(
+                    noteText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // update button
                       IconButton(
-                          onPressed: () => openNoteBox(docID: docID),
-                          icon: const Icon(Icons.settings)),
+                        onPressed: () => openNoteBox(
+                            docID: docID,
+                            action: "update",
+                            defaultNote: noteText),
+                        icon: const Icon(Icons.edit),
+                        color: Colors.white,
+                      ),
 
                       // delete button
                       IconButton(
                           onPressed: () => firestoreService.deleteNote(
                                 docID,
                               ),
-                          icon: const Icon(Icons.delete)),
+                          icon: const Icon(Icons.delete),
+                          color: Colors.red),
                     ],
                   ),
                 );
